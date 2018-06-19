@@ -15,7 +15,6 @@ import java.text.ParseException;
 import java.util.*;
 
 public class Project implements java.io.Serializable {
-
     public static final int PRIVATE_ACCESS = 0;
     public static final int DEFAULT_ACCESS = 10;
     private int id;
