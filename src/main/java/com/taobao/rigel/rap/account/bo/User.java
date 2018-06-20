@@ -23,6 +23,7 @@ public class User implements java.io.Serializable {
     private Set<Project> createdProjectList = new HashSet<Project>();
     private Set<Project> joinedProjectList = new HashSet<Project>();
     private boolean isHintEnabled;
+    private boolean deleted; // add 是否删除
 
     public String getEmpId() {
         return empId;
@@ -242,5 +243,13 @@ public class User implements java.io.Serializable {
 
     public void setRoleId(int roleId) {
         this.roleId = roleId;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

@@ -18,7 +18,7 @@ public class AccountDaoImpl extends HibernateDaoSupport implements AccountDao {
         try {
             User user = (User) currentSession()
                     .load(User.class, getUserId(account));
-            return user != null && user.getPassword().equals(password);
+            return user != null && user.getPassword().equals(password) && !user.isDeleted();
         } catch (ObjectNotFoundException ex) {
             return false;
         }

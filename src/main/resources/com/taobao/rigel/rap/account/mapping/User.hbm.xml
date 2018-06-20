@@ -37,6 +37,12 @@
                 <comment>锁定状态</comment>
             </column>
         </property>
+        <property name="deleted">
+            <column name="deleted">
+                <comment>是否删除</comment>
+            </column>
+        </property>
+
         <property name="incorrectLoginAttempt" type="int">
             <column name="incorrect_login_attempt" not-null="true">
                 <comment>错误登录次数</comment>
