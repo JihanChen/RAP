@@ -115,11 +115,11 @@
             通过分析接口结构，动态生成模拟数据，校验真实接口正确性，
             围绕接口定义，通过一系列自动化工具提升我们的协作效率。我们的口号：提高效率，回家吃晚饭！</p>
 
-        <p>
-            <a class="btn btn-lg btn-success" href="https://github.com/thx/RAP" target="_blank" role="button">
-                GitHub
-            </a>
-        </p>
+##        <p>
+##            <a class="btn btn-lg btn-success" href="https://github.com/thx/RAP" target="_blank" role="button">
+##                GitHub
+##            </a>
+##        </p>
     </div>
 
     <!-- Example row of columns -->
