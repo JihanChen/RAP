@@ -6,6 +6,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Created by Bosn on 14/11/28.
@@ -26,6 +27,13 @@ public class CacheUtils {
     public static final String KEY_NOTIFICATION = "KEY_NOTIFICATION";
     public static final String KEY_STATISTICS = "KEY_STATISTICS";
     public static final String KEY_STATISTICS_OF_TEAM = "KEY_STATISTICS_OF_TEAM";
+
+    /**
+     * 重置密码token
+     */
+    public static final String KEY_PASSWORD_RESET_TOKEN= "RESET_TOKEN";
+    public static final int PASSWORD_RESET_CACHE_EXPIRE_SECS = 86400;
+
 
     private static JedisPool jedisPool;
     private static Jedis jedis;
@@ -122,5 +130,20 @@ public class CacheUtils {
         getJedis();
         jedis.flushAll();
         returnJedis();
+    }
+
+
+    /**
+     * 密码找回-判断是否存在对应的token
+     * @return
+     */
+    public static boolean isExistToken(String[] cacheKey) {
+        if (null == cacheKey || cacheKey.length<=0){
+            return false;
+        }
+        if (get(cacheKey) == null){
+            return false;
+        }
+        return true;
     }
 }

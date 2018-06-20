@@ -239,4 +239,24 @@ public class AccountMgrImpl implements AccountMgr {
         return null;
     }
 
+
+    public String validateEmail(String email) {
+        if (org.apache.commons.lang3.StringUtils.isBlank(email) || !accountDao.emailExists(email)){
+            return "注册邮箱不存在";
+        }
+        return null;
+    }
+
+
+    public User getUserByEmail(String email) {
+        return accountDao.getUserbyEmail(email);
+    }
+
+
+    public void updateProfile(long userId, String newPassword) {
+
+        newPassword = StringUtils.getDoubleMD5(newPassword);
+        accountDao.updateUserPwd(newPassword,userId);
+    }
+
 }

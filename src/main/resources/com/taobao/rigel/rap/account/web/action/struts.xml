@@ -37,6 +37,31 @@
             <result name="success" type="velocity">/platform/home.vm</result>
             <result name="error" type="velocity">/account/register.vm</result>
         </action>
+        <!--找回密码 begin -->
+        <action name="findPassword" class="com.taobao.rigel.rap.account.web.action.AccountAction"
+                method="findPassword"> <result name="success" type="velocity">/account/findPassword.vm</result>
+        </action>
+
+        <action name="doFindPassword"
+                class="com.taobao.rigel.rap.account.web.action.AccountAction" method="doFindPassword">
+            <result name="success" type="velocity">/account/findPassword.vm</result>
+            <result name="error" type="velocity">/account/findPassword.vm</result>
+        </action>
+
+        <action name="resetPassword"
+                class="com.taobao.rigel.rap.account.web.action.AccountAction" method="resetPassword">
+            <result name="success" type="velocity">/account/resetPassword.vm</result>
+            <result name="error" type="velocity">/account/findPassword.vm</result>
+        </action>
+
+        <action name="doResetPassword"
+                class="com.taobao.rigel.rap.account.web.action.AccountAction" method="doResetPassword">
+            <result name="success" type="velocity">/account/resetPassword.vm</result>
+            <result name="error" type="velocity">/account/findPassword.vm</result>
+        </action>
+
+        <!--找回密码 end -->
+
         <action name="myAccount"
                 class="com.taobao.rigel.rap.account.web.action.AccountAction" method="myAccount">
             <result name="success" type="velocity">/account/myAccount.vm</result>

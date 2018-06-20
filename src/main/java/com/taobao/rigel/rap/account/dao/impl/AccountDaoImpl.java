@@ -138,6 +138,7 @@ public class AccountDaoImpl extends HibernateDaoSupport implements AccountDao {
         return query.list();
     }
 
+
     public List<User> getUserList() {
         return currentSession().createQuery("from User").list();
     }
@@ -260,6 +261,30 @@ public class AccountDaoImpl extends HibernateDaoSupport implements AccountDao {
         } else {
             return false;
         }
+    }
+
+
+
+    public boolean emailExists(String email) {
+        User user = getUserbyEmail(email);
+        if (user != null){
+            return true;
+        }
+        return false;
+    }
+
+    public User getUserbyEmail(String email) {
+        Query q = currentSession().createQuery("from User where email = :email ");
+        q.setString("email", email);
+        q.setMaxResults(1);
+        return (User) q.uniqueResult();
+    }
+
+    public void updateUserPwd(String password,Long userId) {
+        Query q = currentSession().createQuery("update User set password = :password where id = :id");
+        q.setString("password", password);
+        q.setLong("id", userId);
+        q.executeUpdate();
     }
 
 }

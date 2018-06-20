@@ -31,6 +31,7 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
         <property name="locations">
             <list>
                 <value>classpath:/config.properties</value>
+                <value>classpath:/email.properties</value>
             </list>
         </property>
     </bean>
@@ -137,5 +138,11 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
             </props>
         </property>
     </bean>
-
+    <bean id="emailService" class="com.taobao.rigel.rap.common.email.EmailService">
+        <property name="emailHost" value="${EMAIL_HOST}"/>
+        <property name="emailPort" value="${EMAIL_PORT}"/>
+        <property name="emailUser" value="${EMAIL_HOST_USER}"/>
+        <property name="emailPassword" value="${EMAIL_HOST_PASSWORD}"/>
+        <property name="fromEmail" value="${DEFAULT_FROM_EMAIL}"/>
+    </bean>
 </beans>

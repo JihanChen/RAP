@@ -230,6 +230,10 @@
                                     </li>
                                 </ul>
                             </li>
+                            <!--找回密码 -->
+                            <li>
+                                <a href="$accountUrl.findPassword" class="dropdown-toggle" id="findPassword-trigger">找回密码</a>
+                            </li>
                         </ul>
                     </div>
                 #end

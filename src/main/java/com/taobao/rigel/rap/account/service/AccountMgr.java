@@ -208,5 +208,14 @@ public interface AccountMgr {
      */
     String validatePasswordFormat(String password);
 
+    /**
+     * validate email
+     *
+     */
+    String validateEmail(String email);
+
+    User getUserByEmail(String email);
+
+    void updateProfile(long userId, String newPassword);
 
 }

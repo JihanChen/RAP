@@ -196,4 +196,28 @@ public interface AccountDao {
      */
     List<Integer> getUserIdList(int teamId);
 
+
+    /**
+     * check email exists
+     *
+     * @param email
+     * @return
+     */
+    boolean emailExists(String email);
+
+
+    /**
+     * 获取用户信息-根据email
+     * @param email
+     * @return
+     */
+    User getUserbyEmail(String email);
+
+
+    /**
+     * 更新用户密码
+     * @param password
+     * @param userId
+     */
+    void updateUserPwd(String password,Long userId);
 }

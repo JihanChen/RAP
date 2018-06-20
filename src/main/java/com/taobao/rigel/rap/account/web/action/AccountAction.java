@@ -5,6 +5,8 @@ import com.taobao.rigel.rap.account.bo.Notification;
 import com.taobao.rigel.rap.account.bo.Role;
 import com.taobao.rigel.rap.account.bo.User;
 import com.taobao.rigel.rap.common.base.ActionBase;
+import com.taobao.rigel.rap.common.config.SystemConstant;
+import com.taobao.rigel.rap.common.email.EmailService;
 import com.taobao.rigel.rap.common.service.impl.ContextManager;
 import com.taobao.rigel.rap.common.utils.CacheUtils;
 import com.taobao.rigel.rap.common.utils.Pinyin4jUtil;
@@ -39,8 +41,24 @@ public class AccountAction extends ActionBase {
     private String profileValue;
     private boolean isEditMode = false;
 
-    public String kaptcha;
+    public String kaptcha; // 验证码-暂时去除
 
+    /**
+     * 邮件校验码
+     */
+    private String policy;
+    private EmailService emailService;
+    private boolean resetSuc;
+
+
+
+    public boolean getResetSuc() {
+        return resetSuc;
+    }
+
+    public void setResetSuc(boolean resetSuc) {
+        this.resetSuc = resetSuc;
+    }
     public User getUser() {
         return user;
     }
@@ -65,6 +83,22 @@ public class AccountAction extends ActionBase {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getPolicy() {
+        return policy;
+    }
+
+    public void setPolicy(String policy) {
+        this.policy = policy;
+    }
+
+    public EmailService getEmailService() {
+        return emailService;
+    }
+
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
     }
 
     public String test() throws AddressException, InterruptedException {
@@ -472,4 +506,94 @@ public class AccountAction extends ActionBase {
         setJson(gson.toJson(obj));
         return SUCCESS;
     }
+
+
+
+    /**
+     * 找回密码
+     * @return
+     */
+    public String findPassword() {
+        doLogout();
+        return SUCCESS;
+    }
+
+    public String doFindPassword() {
+
+        String validateMsg = getAccountMgr().validateEmail(getEmail());
+        if (validateMsg != null) {
+            setErrMsg(validateMsg);
+            return ERROR;
+        }
+
+        User user = getAccountMgr().getUserByEmail(getEmail());
+
+        String policy = StringUtils.getDoubleMD5WithKey(user.getEmail()+"_"+System.currentTimeMillis());
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("您的账户:").append(user.getAccount()).append("<br>")
+                .append("复制下面链接到浏览器里进行重置密码!").append("<br>")
+                .append(SystemConstant.DOMAIN_URL).append("/account/resetPassword.do?")
+                .append("policy=").append(policy);
+        // cache key
+        String[] cacheKey = {CacheUtils.KEY_PASSWORD_RESET_TOKEN,policy};
+
+        // 放入缓存 设置过期时间
+        CacheUtils.put(cacheKey,String.valueOf(user.getId()),CacheUtils.PASSWORD_RESET_CACHE_EXPIRE_SECS);
+
+        // 进行发送邮件找回密码
+        getEmailService().sendHtmlEmail(getEmail(),"xkeshi rap 密码找回",sb.toString());
+        // 设置到页面
+        setPolicy(policy);
+
+        return SUCCESS;
+
+    }
+
+    /**
+     * 跳转到重置密码
+     * @return
+     */
+    public String resetPassword() {
+        // cache key
+        String[] cacheKey = {CacheUtils.KEY_PASSWORD_RESET_TOKEN,policy};
+        if(org.apache.commons.lang3.StringUtils.isBlank(policy)
+                || !CacheUtils.isExistToken(cacheKey)){
+            setErrMsg("该链接已过期或者失效,请重新进行找回密码");
+            return ERROR;
+        }
+        return SUCCESS;
+
+    }
+    /**
+     * 重置密码
+     * @return
+     */
+    public String doResetPassword() {
+        // cache key
+        String[] cacheKey = {CacheUtils.KEY_PASSWORD_RESET_TOKEN,policy};
+
+        if(org.apache.commons.lang3.StringUtils.isBlank(policy)
+                || !CacheUtils.isExistToken(cacheKey)){
+            setErrMsg("该链接已过期或者失效,请重新进行找回密码");
+            return ERROR;
+        }
+
+        String userIdStr = CacheUtils.get(cacheKey);
+        if (org.apache.commons.lang3.StringUtils.isEmpty(userIdStr)){
+            setErrMsg("该链接已过期或者失效,请重新进行找回密码");
+            return ERROR;
+        }
+        super.getAccountMgr().updateProfile(Long.valueOf(userIdStr), getPassword());
+        // 校验之后移除内存
+        CacheUtils.del(cacheKey);
+
+        setResetSuc(true);
+
+        return SUCCESS;
+
+    }
+
+
+
 }
