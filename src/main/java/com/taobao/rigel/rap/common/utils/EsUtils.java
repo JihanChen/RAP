@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -168,6 +169,21 @@ public class EsUtils {
     /**
      * 批量删除es 中的记录
      */
+    public void batchDeleteIndex(Project project){
+
+        if (Objects.isNull(project) || CollectionUtils.isEmpty(project.getModuleList())){
+            return;
+        }
+        Set<Action> actions = project.getModuleList()
+                .stream()
+                .filter(module-> CollectionUtils.isNotEmpty(module.getPageList()))
+                .flatMap(module -> module.getPageList().stream())
+                .filter(page -> CollectionUtils.isNotEmpty(page.getActionList()))
+                .flatMap(page -> page.getActionList().stream())
+                .collect(Collectors.toSet());
+        batchDeleteIndex(actions);
+    }
+
     public void batchDeleteIndex(Set<Action> actions){
 
         if (CollectionUtils.isEmpty(actions)){

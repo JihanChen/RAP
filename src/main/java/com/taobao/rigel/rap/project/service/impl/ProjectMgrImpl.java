@@ -8,6 +8,7 @@ import com.taobao.rigel.rap.account.service.AccountMgr;
 import com.taobao.rigel.rap.common.elasticsearch.EsOperateSdk;
 import com.taobao.rigel.rap.common.utils.ArrayUtils;
 import com.taobao.rigel.rap.common.utils.CacheUtils;
+import com.taobao.rigel.rap.common.utils.EsUtils;
 import com.taobao.rigel.rap.common.utils.HTTPUtils;
 import com.taobao.rigel.rap.common.config.SystemConstant;
 import com.taobao.rigel.rap.organization.bo.Group;
@@ -153,6 +154,9 @@ public class ProjectMgrImpl implements ProjectMgr {
                 organizationDao.updateCountersInProductionLine(pId);
             }
         }
+        // 删除es 中所有的接口记录
+        EsUtils.instance(esOperateSdk).batchDeleteIndex(p);
+
         return result;
     }
 
