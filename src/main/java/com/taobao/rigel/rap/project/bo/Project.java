@@ -1,18 +1,22 @@
 package com.taobao.rigel.rap.project.bo;
 
 import com.taobao.rigel.rap.account.bo.User;
+import com.taobao.rigel.rap.common.elasticsearch.EsOperateSdk;
 import com.taobao.rigel.rap.common.utils.ArrayUtils;
 import com.taobao.rigel.rap.common.utils.DateUtils;
+import com.taobao.rigel.rap.common.utils.EsUtils;
 import com.taobao.rigel.rap.common.utils.StringUtils;
 import com.taobao.rigel.rap.project.enums.ParameterType;
 import com.taobao.rigel.rap.workspace.bo.CheckIn;
 import com.taobao.rigel.rap.workspace.bo.Workspace;
 import com.taobao.rigel.rap.workspace.bo.Workspace.ModeType;
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Session;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.ParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Project implements java.io.Serializable {
     public static final int PRIVATE_ACCESS = 0;
@@ -462,23 +466,32 @@ public class Project implements java.io.Serializable {
         return null;
     }
 
-    public void removeModule(int id, Session session) {
+    public void removeModule(int id, Session session,EsOperateSdk esOperateSdk) {
         Module module = findModule(id);
         if (module != null && moduleList != null) {
             moduleList.remove(module);
             session.delete(module);
+            // 过滤出需要进行删除的action记录
+            Set<Action> removeAction = module.getPageList().stream()
+                    .filter(e-> CollectionUtils.isNotEmpty(e.getActionList()))
+                    .flatMap(e -> e.getActionList().stream())
+                    .collect(Collectors.toSet());
+            // 批量删除es 中的文档记录
+            EsUtils.instance(esOperateSdk).batchDeleteIndex(removeAction);
         }
     }
 
-    public void removePage(int id, Session session) {
+    public void removePage(int id, Session session,EsOperateSdk esOperateSdk) {
         Page page = findPage(id);
         if (page != null && page.getModule() != null && page.getModule().getPageList() != null) {
             page.getModule().getPageList().remove(page);
             session.delete(page);
+            // 批量删除es 中的文档记录
+            EsUtils.instance(esOperateSdk).batchDeleteIndex(page.getActionList());
         }
     }
 
-    public void removeAction(int id, Session session) {
+    public void removeAction(int id, Session session,EsOperateSdk esOperateSdk) {
         Action action = findAction(id);
         if (action == null) return;
         Set<Page> pageList = action.getPageList();
@@ -488,6 +501,8 @@ public class Project implements java.io.Serializable {
             iterator.next().getActionList().remove(action);
             session.delete(action);
         }
+        // 删除es 中的记录
+        EsUtils.instance(esOperateSdk).deleteSearchIndex(Long.valueOf(id));
     }
 
     /** 修改移除参数 */

@@ -12,8 +12,8 @@ import com.taobao.rigel.rap.project.bo.Parameter;
 import com.taobao.rigel.rap.project.dao.ProjectDao;
 import com.taobao.rigel.rap.project.service.ProjectMgr;
 import nl.flotsam.xeger.Xeger;
-import org.apache.logging.log4j.LogManager;
-import sun.misc.Cache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -23,12 +23,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MockMgrImpl implements MockMgr {
+    private static final Logger logger = LoggerFactory.getLogger(MockMgrImpl.class);
 
     interface Callback {
         void onSuccess(String result);
     }
 
-    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(MockMgrImpl.class);
     private final String ERROR_PATTERN = "{\"isOk\":false,\"msg\":\"路径为空，请查看是否接口未填写URL.\"}";
     private final String ERROR_SEARCH = "{\"isOk\":false,\"msg\":\"请求参数不合法。\"}"; // 请查看是否含有 script、img、iframe 等标签
     private ProjectDao projectDao;

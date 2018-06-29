@@ -103,7 +103,7 @@
                         <li>
                             <div class="search-project-con">
                                 <span class="glyphicon glyphicon-search"></span>
-                                <input type="text" class="project-search-inputer form-control" placeholder="搜索项目名称"/>
+                                <input type="text" class="project-search-inputer form-control" placeholder="搜索接口"/>
 
                                 <div class="project-autocomplete-con">
                                     <ul class="list-unstyled">

@@ -2,11 +2,13 @@ package com.taobao.rigel.rap.organization.web.action;
 
 import com.taobao.rigel.rap.account.bo.User;
 import com.taobao.rigel.rap.common.base.ActionBase;
+import com.taobao.rigel.rap.common.config.SystemConstant;
 import com.taobao.rigel.rap.common.utils.CacheUtils;
 import com.taobao.rigel.rap.common.utils.StringUtils;
-import com.taobao.rigel.rap.common.config.SystemConstant;
 import com.taobao.rigel.rap.organization.bo.Corporation;
 import com.taobao.rigel.rap.organization.service.OrganizationMgr;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +18,7 @@ import java.util.List;
  */
 public class TeamAction extends ActionBase {
 
-    private static final org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getFormatterLogger(TeamAction.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(TeamAction.class);
     private int id;
     private String name;
     private String accountList;

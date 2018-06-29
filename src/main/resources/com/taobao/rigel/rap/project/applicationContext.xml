@@ -9,6 +9,7 @@
         <property name="organizationDao" ref="organizationDao"/>
         <property name="organizationMgr" ref="organizationMgr"/>
         <property name="workspaceDao" ref="workspaceDao"/>
+        <property name="esOperateSdk" ref="esOperateSdk"/>
     </bean>
     <bean id="projectDao" class="com.taobao.rigel.rap.project.dao.impl.ProjectDaoImpl" parent="baseDao"/>
     <bean id="accountDao" class="com.taobao.rigel.rap.account.dao.impl.AccountDaoImpl" parent="baseDao"/>

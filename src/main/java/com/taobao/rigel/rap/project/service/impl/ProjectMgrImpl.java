@@ -5,6 +5,7 @@ import com.taobao.rigel.rap.account.bo.Notification;
 import com.taobao.rigel.rap.account.bo.User;
 import com.taobao.rigel.rap.account.dao.AccountDao;
 import com.taobao.rigel.rap.account.service.AccountMgr;
+import com.taobao.rigel.rap.common.elasticsearch.EsOperateSdk;
 import com.taobao.rigel.rap.common.utils.ArrayUtils;
 import com.taobao.rigel.rap.common.utils.CacheUtils;
 import com.taobao.rigel.rap.common.utils.HTTPUtils;
@@ -30,6 +31,15 @@ public class ProjectMgrImpl implements ProjectMgr {
     private WorkspaceDao workspaceDao;
     private OrganizationMgr organizationMgr;
     private AccountDao accountDao;
+    private EsOperateSdk esOperateSdk;
+
+    public EsOperateSdk getEsOperateSdk() {
+        return esOperateSdk;
+    }
+
+    public void setEsOperateSdk(EsOperateSdk esOperateSdk) {
+        this.esOperateSdk = esOperateSdk;
+    }
 
     public OrganizationMgr getOrganizationMgr() {
         return organizationMgr;
@@ -239,7 +249,7 @@ public class ProjectMgrImpl implements ProjectMgr {
     public String updateProject(int id, String projectData,
                                 String deletedObjectListData, Map<Integer, Integer> actionIdMap) {
         clearProjectDocCache(id);
-        return projectDao.updateProject(id, projectData, deletedObjectListData, actionIdMap);
+        return projectDao.updateProject(id, projectData, deletedObjectListData, actionIdMap,esOperateSdk);
     }
 
 

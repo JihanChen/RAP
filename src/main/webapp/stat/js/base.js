@@ -3181,7 +3181,7 @@ $._templates = {
 	</div>',
 
     projects: '{{#projects}}\
-		<li data-id="{{id}}">{{name}}</li>\
+		<li data-pid="{{pid}}" data-iid="{{iid}}"> {{name}}</li>\
 	{{/projects}}',
 
     loginError: '<div class="alert alert-warning fade in" style="padding: 10px; margin-top: 10px; margin-bottom: 10px;">\
@@ -3279,7 +3279,7 @@ $(function () {
                 }
                 jqThis.data('searching', 0);
                 if (data && data.length === 0) {
-                    data = [{id: '-1', name: '没有找到 "' + val + '" 对应的项目，o(╯□╰)o'}];
+                    data = [{pid: '-1', iid: '-1', name: '没有找到 "' + val + '" 对应的项目，o(╯□╰)o'}];
                 }
                 ul.html($.render($._templates['projects'], {
                     projects: data
@@ -3340,7 +3340,7 @@ $(function () {
                 inputer.blur();
             } else if (code == 13) {
                 if (prev) {
-                    var id = prev.data('id');
+                    var id = prev.data('pid');
                     if (id == '-1') {
                         return;
                     }
@@ -3350,11 +3350,14 @@ $(function () {
         });
         con.delegate('li', 'click', function () {
             var jqThis = $(this);
-            var id = jqThis.data('id');
-            if (id == '-1') {
+            var pid = jqThis.data('pid');
+            var iid = jqThis.data('iid');
+            if (pid == '-1') {
                 return;
             }
-            window.location.href = '/workspace/myWorkspace.action?projectId=' + id;
+            var redirectUrl = '/workspace/myWorkspace.action?projectId=' + pid+'&actionId=' + iid;
+            // window.location.href = redirectUrl;
+            window.open(redirectUrl);
         });
     }
 
@@ -3369,7 +3372,7 @@ $(function () {
         return;
     }
     loginTrigger.click(function () {
-        $('#cancel-register-btn').trigger('click');
+        // $('#cancel-register-btn').trigger('click');
         $(this).addClass('active')
             .parent().addClass('open')
             .find('.dropdown-menu').show();

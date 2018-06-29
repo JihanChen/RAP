@@ -1,11 +1,15 @@
 package com.taobao.rigel.rap.project.web.action;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.taobao.rigel.rap.account.bo.User;
 import com.taobao.rigel.rap.auto.generate.bo.VelocityTemplateGenerator;
 import com.taobao.rigel.rap.auto.generate.contract.Generator;
 import com.taobao.rigel.rap.common.base.ActionBase;
+import com.taobao.rigel.rap.common.bo.EsAction;
 import com.taobao.rigel.rap.common.bo.RapError;
+import com.taobao.rigel.rap.common.elasticsearch.EsOperateSdk;
+import com.taobao.rigel.rap.common.utils.EsUtils;
 import com.taobao.rigel.rap.organization.bo.Group;
 import com.taobao.rigel.rap.organization.bo.ProductionLine;
 import com.taobao.rigel.rap.organization.service.OrganizationMgr;
@@ -43,9 +47,17 @@ public class ProjectAction extends ActionBase {
     private String projectData;
     private String result;
     private InputStream outputStream;
-
+    private EsOperateSdk esOperateSdk;
     public OrganizationMgr getOrganizationMgr() {
         return organizationMgr;
+    }
+
+    public EsOperateSdk getEsOperateSdk() {
+        return esOperateSdk;
+    }
+
+    public void setEsOperateSdk(EsOperateSdk esOperateSdk) {
+        this.esOperateSdk = esOperateSdk;
     }
 
     public void setOrganizationMgr(OrganizationMgr organizationMgr) {
@@ -377,22 +389,21 @@ public class ProjectAction extends ActionBase {
             return JSON_ERROR;
         }
 
-        User curUser = getCurUser();
-        if (curUser.isAdmin()) {
-            searchResult = projectMgr.search(key);
-        } else {
-            searchResult = projectMgr.search(key, getCurUserId());
-        }
+        List<EsAction> searchResult = EsUtils.instance(esOperateSdk).queryProjectByActionValue(key);
 
-        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-        for (Project p : searchResult) {
-            Map<String, Object> item = new HashMap<String, Object>();
-            item.put("id", p.getId());
-            item.put("name", p.getName());
-            list.add(item);
-        }
+        List<Map<String, Object>> result = Lists.newArrayList();
+        Optional.ofNullable(searchResult).ifPresent(list->{
+            list.stream().forEach(e->{
+                Map<String, Object> item = new HashMap<String, Object>();
+                item.put("pid", e.getProjectId());
+                item.put("iid",e.getId());
+                item.put("name",e.getName()+" "+e.getRequestUrl());
+                result.add(item);
+            });
+
+        });
         Gson gson = new Gson();
-        setJson(gson.toJson(list));
+        setJson(gson.toJson(result));
         return SUCCESS;
     }
 

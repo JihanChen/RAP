@@ -4,8 +4,8 @@ import com.taobao.rigel.rap.account.bo.User;
 import com.taobao.rigel.rap.common.bo.Item;
 import com.taobao.rigel.rap.project.bo.Project;
 import com.taobao.rigel.rap.project.service.ProjectMgr;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -15,7 +15,7 @@ import java.util.*;
 public class SystemVisitorLog {
     private static final int MAX_LOG_LENGTH = 10;
     private static final int REALTIME_TIME_SPAN = 60;
-    private static final Logger logger = LogManager.getFormatterLogger(SystemVisitorLog.class);
+    private static final Logger logger = LoggerFactory.getLogger(SystemVisitorLog.class);
     private static Map<String, Long> ipMap = new HashMap<String, Long>();
     private static Map<String, Long> userMap = new HashMap<String, Long>();
     private static List<Map<String, String>> mockMapList = new ArrayList<Map<String, String>>();
@@ -159,7 +159,7 @@ public class SystemVisitorLog {
         ipMap.put(ip, ipCount);
 
         if ((ipCount + 1) % 100 == 0) {
-            logger.info("Visitor [%s] visit %d times.", ip, ipCount);
+            logger.info("Visitor [{}] visit {} times.", ip, ipCount);
         }
     }
 
@@ -169,7 +169,7 @@ public class SystemVisitorLog {
         Long userCount = userMap.get(name);
         if (userCount == null) {
             userMap.put(name, 0L);
-            logger.info("New logined visitor %s(%s)", name, account);
+            logger.info("New logined visitor {}({})", name, account);
             return;
         }
 
@@ -178,7 +178,7 @@ public class SystemVisitorLog {
         userMap.put(name, userCount);
 
         if ((userCount + 1) % 100 == 0) {
-            logger.info("Logined visitor %s(%s) visit %d times.", name, account, userCount);
+            logger.info("Logined visitor {}({}) visit {} times.", name, account, userCount);
         }
     }
 

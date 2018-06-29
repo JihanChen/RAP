@@ -2,10 +2,8 @@ package com.taobao.rigel.rap.platform.web.action;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.taobao.rigel.rap.account.bo.User;
 import com.taobao.rigel.rap.common.base.ActionBase;
 import com.taobao.rigel.rap.common.bo.Item;
-import com.taobao.rigel.rap.common.config.SystemConstant;
 import com.taobao.rigel.rap.common.utils.CacheUtils;
 import com.taobao.rigel.rap.common.utils.CommonUtils;
 import com.taobao.rigel.rap.common.utils.SystemVisitorLog;
@@ -13,17 +11,17 @@ import com.taobao.rigel.rap.organization.bo.Corporation;
 import com.taobao.rigel.rap.organization.service.OrganizationMgr;
 import com.taobao.rigel.rap.platform.service.DataMgr;
 import com.taobao.rigel.rap.project.service.ProjectMgr;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class PlatformAction extends ActionBase {
-    // private static final Logger logger = LogManager.getFormatterLogger(PlatformAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(PlatformAction.class);
+
     private Gson gson = new Gson();
     private String time;
     private Map<String, List<Map<String, Object>>> trends;

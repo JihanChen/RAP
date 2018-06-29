@@ -18,14 +18,14 @@ import com.taobao.rigel.rap.project.service.ProjectMgr;
 import com.taobao.rigel.rap.workspace.bo.CheckIn;
 import com.taobao.rigel.rap.workspace.bo.Workspace;
 import com.taobao.rigel.rap.workspace.service.WorkspaceMgr;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -34,7 +34,7 @@ import java.util.*;
 
 public class WorkspaceAction extends ActionBase {
 
-    private static final Logger logger = LogManager.getFormatterLogger(WorkspaceAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(WorkspaceAction.class);
     public Module module;
     private OrganizationMgr organizationMgr;
 
@@ -512,7 +512,7 @@ public class WorkspaceAction extends ActionBase {
             int userId = super.getCurUserId();
             int projectId = (Integer) projectLockList.get(userId);
             projectLockList.remove(userId);
-            logger.info("user[%d] unlock project[%d]", userId, projectId);
+            logger.info("user[{}] unlock project[{}]", userId, projectId);
         }
         return SUCCESS;
     }

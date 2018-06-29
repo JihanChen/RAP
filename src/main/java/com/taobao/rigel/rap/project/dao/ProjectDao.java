@@ -1,6 +1,7 @@
 package com.taobao.rigel.rap.project.dao;
 
 import com.taobao.rigel.rap.account.bo.User;
+import com.taobao.rigel.rap.common.elasticsearch.EsOperateSdk;
 import com.taobao.rigel.rap.project.bo.Action;
 import com.taobao.rigel.rap.project.bo.Module;
 import com.taobao.rigel.rap.project.bo.Page;
@@ -38,7 +39,7 @@ public interface ProjectDao {
      * @return
      */
     String updateProject(int id, String projectData,
-                         String deletedObjectListData, Map<Integer, Integer> actionIdMap);
+                         String deletedObjectListData, Map<Integer, Integer> actionIdMap, EsOperateSdk esOperateSdk);
 
     /**
      * update project

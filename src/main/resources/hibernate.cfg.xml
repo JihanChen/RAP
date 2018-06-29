@@ -30,8 +30,9 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
-                <value>classpath:/config.properties</value>
+                <value>classpath:/datasource.properties</value>
                 <value>classpath:/email.properties</value>
+                <value>classpath:/es.properties</value>
             </list>
         </property>
     </bean>
@@ -144,5 +145,12 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
         <property name="emailUser" value="${EMAIL_HOST_USER}"/>
         <property name="emailPassword" value="${EMAIL_HOST_PASSWORD}"/>
         <property name="fromEmail" value="${DEFAULT_FROM_EMAIL}"/>
+    </bean>
+
+    <!-- es -->
+    <bean id="esOperateSdk" class="com.taobao.rigel.rap.common.elasticsearch.EsOperateSdk" init-method="init">
+        <property name="esClusterNodes" value="${es.cluster.nodes}" />
+        <property name="esClusterName" value="${es.cluster.name}" />
+        <property name="esOperateTimeoutSeconds" value="${es.cluster.timeout}" />
     </bean>
 </beans>

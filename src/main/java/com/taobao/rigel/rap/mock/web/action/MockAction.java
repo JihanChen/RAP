@@ -2,7 +2,6 @@ package com.taobao.rigel.rap.mock.web.action;
 
 import com.google.gson.Gson;
 import com.taobao.rigel.rap.common.base.ActionBase;
-import com.taobao.rigel.rap.common.utils.HTTPUtils;
 import com.taobao.rigel.rap.common.utils.StringUtils;
 import com.taobao.rigel.rap.common.utils.SystemVisitorLog;
 import com.taobao.rigel.rap.mock.service.MockMgr;
@@ -11,8 +10,9 @@ import com.taobao.rigel.rap.project.bo.Module;
 import com.taobao.rigel.rap.project.bo.Page;
 import com.taobao.rigel.rap.project.bo.Project;
 import com.taobao.rigel.rap.project.service.ProjectMgr;
-import org.apache.logging.log4j.LogManager;
 import org.apache.struts2.ServletActionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -22,8 +22,8 @@ import java.util.Map;
 
 
 public class MockAction extends ActionBase {
+    private static final Logger logger = LoggerFactory.getLogger(MockAction.class);
 
-    private static final org.apache.logging.log4j.Logger logger = LogManager.getFormatterLogger(MockAction.class.getName());
     private int id;
     private int __id__;
     private String pattern;

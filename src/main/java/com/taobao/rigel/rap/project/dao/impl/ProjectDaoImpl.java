@@ -2,10 +2,8 @@ package com.taobao.rigel.rap.project.dao.impl;
 
 import com.google.gson.Gson;
 import com.taobao.rigel.rap.account.bo.User;
-import com.taobao.rigel.rap.common.utils.ArrayUtils;
-import com.taobao.rigel.rap.common.utils.CacheUtils;
-import com.taobao.rigel.rap.common.utils.StringUtils;
-import com.taobao.rigel.rap.common.utils.URLUtils;
+import com.taobao.rigel.rap.common.elasticsearch.EsOperateSdk;
+import com.taobao.rigel.rap.common.utils.*;
 import com.taobao.rigel.rap.project.bo.*;
 import com.taobao.rigel.rap.project.dao.ProjectDao;
 import com.taobao.rigel.rap.project.enums.ParameterType;
@@ -152,7 +150,7 @@ public class ProjectDaoImpl extends HibernateDaoSupport implements ProjectDao {
 
 
     public String updateProject(int id, String projectData,
-                                String deletedObjectListData, Map<Integer, Integer> actionIdMap) {
+                                String deletedObjectListData, Map<Integer, Integer> actionIdMap,EsOperateSdk esOperateSdk) {
         Session session = currentSession();
 
         Gson gson = new Gson();
@@ -168,11 +166,11 @@ public class ProjectDaoImpl extends HibernateDaoSupport implements ProjectDao {
         // performing deleting
         for (ObjectItem item : deletedObjectList) {
             if (item.getClassName().equals("Module")) {
-                projectServer.removeModule(item.getId(), session);
+                projectServer.removeModule(item.getId(), session,esOperateSdk);
             } else if (item.getClassName().equals("Page")) {
-                projectServer.removePage(item.getId(), session);
+                projectServer.removePage(item.getId(), session,esOperateSdk);
             } else if (item.getClassName().equals("Action")) {
-                projectServer.removeAction(item.getId(), session);
+                projectServer.removeAction(item.getId(), session,esOperateSdk);
             } else if (item.getClassName().equals("Parameter")) {
                 projectServer.removeParameter(item.getId(), session);
             }
@@ -182,14 +180,14 @@ public class ProjectDaoImpl extends HibernateDaoSupport implements ProjectDao {
         for (Module module : projectClient.getModuleList()) {
             Module moduleServer = projectServer.findModule(module.getId());
             if (moduleServer == null) {
-                addModule(session, projectServer, module);
+                addModule(session, projectServer,module,esOperateSdk);
                 continue;
             }
             moduleServer.update(module);
             for (Page page : module.getPageList()) {
                 Page pageServer = projectServer.findPage(page.getId());
                 if (pageServer == null) {
-                    addPage(session, module, page);
+                    addPage(session, module, page,id,esOperateSdk);
                     continue;
                 }
                 pageServer.update(page);
@@ -198,11 +196,14 @@ public class ProjectDaoImpl extends HibernateDaoSupport implements ProjectDao {
                             .getId());
                     if (actionServer == null) {
                         int oldActionId = action.getId();
-                        int createdActionId = addAction(session, page, action);
+                        int createdActionId = addAction(session, page, action,id,esOperateSdk);
                         actionIdMap.put(oldActionId, createdActionId);
                         continue;
                     }
                     actionServer.update(action);
+                    // 更新es上的数据
+                    EsUtils.instance(esOperateSdk).updateSearchIndex(action,id);
+
                     CacheUtils.removeCacheByActionId(action.getId());
                     for (Parameter parameter : action.getRequestParameterList()) {
                         Parameter parameterServer = projectServer
@@ -272,27 +273,34 @@ public class ProjectDaoImpl extends HibernateDaoSupport implements ProjectDao {
         }
     }
 
-    private void addModule(Session session, Project project, Module module) {
+    private void addModule(Session session, Project project, Module module,EsOperateSdk esOperateSdk) {
         project.addModule(module);
         session.save(module);
         for (Page page : module.getPageList()) {
-            addPage(session, module, page);
+            addPage(session, module, page,project.getId(),esOperateSdk);
         }
     }
 
-    private void addPage(Session session, Module module, Page page) {
+    private void addPage(Session session, Module module, Page page,int projectId,EsOperateSdk esOperateSdk) {
         module = (Module) session.load(Module.class, module.getId());
         module.addPage(page);
         session.save(page);
         for (Action action : page.getActionList()) {
-            addAction(session, page, action);
+            addAction(session, page, action,projectId,esOperateSdk);
         }
     }
 
-    private int addAction(Session session, Page page, Action action) {
+    /**
+     *
+     * 添加接口信息
+     */
+    private int addAction(Session session, Page page, Action action,int projectId,EsOperateSdk esOperateSdk) {
         page = session.load(Page.class, page.getId());
         page.addAction(action);
         int createdId = (Integer) session.save(action);
+        // 开始保存数据到es 项目搜索用
+        EsUtils.instance(esOperateSdk).createSearchIndex(action,projectId);
+        // 开始保存数据到es 项目搜索用
         for (Parameter parameter : action.getRequestParameterList()) {
             addParameter(session, action, parameter,  ParameterType.REQUEST);
         }

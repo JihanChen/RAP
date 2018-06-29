@@ -1,12 +1,12 @@
 package com.taobao.rigel.rap.common.utils;
+
 import com.taobao.rigel.rap.project.bo.Action;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Created by Bosn on 14/11/28.
@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 public class CacheUtils {
     private static final int DEFAULT_CACHE_EXPIRE_SECS = 600;
-    private static final Logger logger = LogManager.getLogger(CacheUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(CacheUtils.class);
 
     public static final String KEY_MOCK_RULE = "KEY_MOCK_RULE:";
     public static final String KEY_MOCK_DATA = "KEY_MOCK_DATA";
