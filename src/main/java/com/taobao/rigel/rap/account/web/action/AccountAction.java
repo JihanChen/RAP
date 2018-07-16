@@ -542,7 +542,7 @@ public class AccountAction extends ActionBase {
         CacheUtils.put(cacheKey,String.valueOf(user.getId()),CacheUtils.PASSWORD_RESET_CACHE_EXPIRE_SECS);
 
         // 进行发送邮件找回密码
-        getEmailService().sendHtmlEmail(getEmail(),"xkeshi rap 密码找回",sb.toString());
+        getEmailService().sendHtmlEmail(getEmail(),"rap 密码找回",sb.toString());
         // 设置到页面
         setPolicy(policy);
 
